@@ -1,5 +1,4 @@
 from tkinter import *
-import pyautogui as guy
 
 tk = Tk()
 tk['bg'] = '#ffffff'
