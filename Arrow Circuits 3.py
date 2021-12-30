@@ -15,8 +15,10 @@ electrifiedArrowPointingUp = PhotoImage(file="resources/electrified_arrow_pUP.pn
 electrifiedArrowPointingDown = PhotoImage(file="resources/electrified_arrow_pDOWN.png")
 electrifiedArrowPointingLeft = PhotoImage(file="resources/electrified_arrow_pLEFT.png")
 electrifiedArrowPointingRight = PhotoImage(file="resources/electrified_arrow_pRIGHT.png")
+
 menuIconArrow = PhotoImage(file="resources/arrow_menu_icon.png")
 menuIconElectrify = PhotoImage(file="resources/electrify_menu_icon.png")
+menuIconEraser = PhotoImage(file="resources/eraser_menu_icon.png")
 
 selected_image = emptyCell
 
@@ -64,6 +66,9 @@ menuButtonElectrify.place(x=50, y= img_height * 15.5)
 menuButtonArrow = Button(tk, image = menuIconArrow, command = lambda: select_tool(arrowPointingUp))
 menuButtonArrow.place(x=214, y= img_height * 15.5)
 
+menuButtonEraser = Button(tk, image = menuIconEraser, command = lambda: select_tool(emptyCell))
+menuButtonEraser.place(x=378, y= img_height * 15.5)
+
 def change_image(imgNumber, image):
     draw_image(imgNumber, image)
     
@@ -74,6 +79,6 @@ def fix_image(event):
     if imgNumber[0] < 33 and imgNumber[1] < 15:
         draw_image(imgNumber, selected_image)
 
-tk.bind('<Button-1>', fix_image)
+tk.bind('<B1-Motion>', fix_image)
 
 tk.mainloop()
