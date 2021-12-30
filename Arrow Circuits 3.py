@@ -6,7 +6,7 @@ tk['bg'] = '#ffffff'
 tk.title('Arrow Circuits')
 
 emptyCell = PhotoImage(name="Eraser", file="resources/empty_cell.png")
-electrifiedEmptyCell = PhotoImage(name="Electrify", file="resources/electrified_empty_cell.png")
+generator = PhotoImage(name="Electrify", file="resources/generator.png")
 arrowPointingUp = PhotoImage(name="Arrow", file="resources/arrow_pUP.png")
 arrowPointingDown = PhotoImage(file="resources/arrow_pDOWN.png")
 arrowPointingLeft = PhotoImage(file="resources/arrow_pLEFT.png")
@@ -87,7 +87,7 @@ def make_rotator_tool():
 menuButtonEraser = Button(tk, image = menuIconEraser, command = lambda: select_tool(make_image_tool(emptyCell)))
 menuButtonEraser.place(x=50, y= img_height * 15.5)
 
-menuButtonElectrify = Button(tk, image = menuIconElectrify, command = lambda: select_tool(make_image_tool(electrifiedEmptyCell)))
+menuButtonElectrify = Button(tk, image = menuIconElectrify, command = lambda: select_tool(make_image_tool(generator)))
 menuButtonElectrify.place(x=214, y= img_height * 15.5)
 
 menuButtonRotate = Button(tk, image = menuIconRotate, command = lambda: select_tool(make_rotator_tool()))
