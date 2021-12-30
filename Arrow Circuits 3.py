@@ -19,8 +19,7 @@ electrifiedArrowPointingRight = PhotoImage(file="resources/electrified_arrow_pRI
 menuIconArrow = PhotoImage(file="resources/arrow_menu_icon.png")
 menuIconElectrify = PhotoImage(file="resources/electrify_menu_icon.png")
 menuIconEraser = PhotoImage(file="resources/eraser_menu_icon.png")
-
-selected_image = emptyCell
+menuIconRotate = PhotoImage(file="resources/rotate_menu_icon.png")
 
 img_width = emptyCell.width()
 img_height = emptyCell.height()
@@ -53,32 +52,58 @@ def draw_grid(grid):
         for ix in range(0, len(grid[iy])):
             draw_image((ix, iy), grid[iy][ix])
 
+def set_cell(grid, x, y, image):
+    grid[y][x] = image
+    draw_image((x,y), image)
+
 draw_grid(grid)
+
 #MENU
+
+def make_image_tool(image):
+    image_tool = lambda x,y: set_cell(grid, x, y, image)
+    image_tool.name = image.name
+    return image_tool
+
+current_tool = make_image_tool(emptyCell)
+
 def select_tool(tool):
-    global selected_image
-    selected_image = tool
-    print("Selected tool: " + tool.name)
+    global current_tool
+    current_tool = tool
+    print(f"Selected tool: {tool.name}")
 
-menuButtonElectrify = Button(tk, image = menuIconElectrify, command = lambda: select_tool(electrifiedEmptyCell))
-menuButtonElectrify.place(x=50, y= img_height * 15.5)
+def make_rotator_tool():
+    def rotator_tool(x, y):
+        images = [arrowPointingUp, arrowPointingRight, arrowPointingDown, arrowPointingLeft]
+        current_cell_image = grid[y][x]
+        try:
+            next_image = images[(images.index(current_cell_image) + 1) % len(images)]
+        except ValueError:
+            return
+        set_cell(grid, x, y, next_image)
+    rotator_tool.name = "Rotator"
+    return rotator_tool
 
-menuButtonArrow = Button(tk, image = menuIconArrow, command = lambda: select_tool(arrowPointingUp))
-menuButtonArrow.place(x=214, y= img_height * 15.5)
+menuButtonEraser = Button(tk, image = menuIconEraser, command = lambda: select_tool(make_image_tool(emptyCell)))
+menuButtonEraser.place(x=50, y= img_height * 15.5)
 
-menuButtonEraser = Button(tk, image = menuIconEraser, command = lambda: select_tool(emptyCell))
-menuButtonEraser.place(x=378, y= img_height * 15.5)
+menuButtonElectrify = Button(tk, image = menuIconElectrify, command = lambda: select_tool(make_image_tool(electrifiedEmptyCell)))
+menuButtonElectrify.place(x=214, y= img_height * 15.5)
 
-def change_image(imgNumber, image):
-    draw_image(imgNumber, image)
+menuButtonRotate = Button(tk, image = menuIconRotate, command = lambda: select_tool(make_rotator_tool()))
+menuButtonRotate.place(x=378, y= img_height * 15.5)
+
+menuButtonArrow = Button(tk, image = menuIconArrow, command = lambda: select_tool(make_image_tool(arrowPointingUp)))
+menuButtonArrow.place(x=542, y= img_height * 15.5)
     
-def fix_image(event):
+def buttons_reaction(event):
     if event.widget != canvas:
         return
-    imgNumber = get_img_number(event.x, event.y)
-    if imgNumber[0] < 33 and imgNumber[1] < 15:
-        draw_image(imgNumber, selected_image)
 
-tk.bind('<B1-Motion>', fix_image)
+    (x, y) = get_img_number(event.x, event.y)
+    current_tool(x, y)
+
+tk.bind('<Button-1>', buttons_reaction)
+tk.bind('<B1-Motion>', buttons_reaction)
 
 tk.mainloop()
