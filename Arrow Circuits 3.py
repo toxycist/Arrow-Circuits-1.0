@@ -67,4 +67,4 @@ def fix_image(event):
 
 tk.bind('<Button-1>', fix_image)
 
-#tk.mainloop()
+tk.mainloop()
