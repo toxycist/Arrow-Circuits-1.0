@@ -139,8 +139,11 @@ electrified_arrows = [electrifiedArrowPointingUp,
                       electrifiedArrowPointingLeft,
                       electrifiedArrowPointingDown]
 
-electrified_cells = electrified_arrows + [generator]
-
+electrified_cells = [electrifiedArrowPointingUp, 
+                     electrifiedArrowPointingRight, 
+                     electrifiedArrowPointingDown,
+                     electrifiedArrowPointingLeft, 
+                     generator]
 class AffectedCell(object):
     def __init__(self, x, y, image):
         self.x = x
@@ -157,35 +160,35 @@ class CellAt(AffectedCell): # I rename AffectedCell to CellAt for readability
     def __init__(self, x, y):
         AffectedCell.__init__(self, x, y, grid[y][x])
 
-def one_up_from(fromCell):
+def oneUpFrom(fromCell):
     if fromCell.y == 0:
         return None
     return CellAt(fromCell.x, fromCell.y - 1)
 
-def one_left_from(fromCell):
+def oneLeftFrom(fromCell):
     if fromCell.x == 0:
         return None
     return CellAt(fromCell.x - 1, fromCell.y)
 
-def one_right_from(fromCell):
+def oneRightFrom(fromCell):
     if fromCell.x == len(grid[0]) - 1:
         return None
     return CellAt(fromCell.x + 1, fromCell.y)
 
-def one_left_from(fromCell):
+def oneDownFrom(fromCell):
     if fromCell.y == len(grid) - 1:
         return None
     return CellAt(fromCell.x, fromCell.y + 1)
 
-def one_back_from(fromCell):
+def oneBackFrom(fromCell):
     if fromCell.image == arrowPointingRight or fromCell.image == electrifiedArrowPointingRight:
-        return one_left_from(fromCell)
+        return oneLeftFrom(fromCell)
     elif fromCell.image == arrowPointingDown or fromCell.image == electrifiedArrowPointingDown:
-        return one_up_from(fromCell)
+        return oneUpFrom(fromCell)
     elif fromCell.image == arrowPointingLeft or fromCell.image == electrifiedArrowPointingLeft:
-        return one_right_from(fromCell)
+        return oneRightFrom(fromCell)
     elif fromCell.image == arrowPointingUp or fromCell.image == electrifiedArrowPointingUp:
-        return one_left_from(fromCell)
+        return oneDownFrom(fromCell)
 
 def electrifyArrowCell(arrowCell):
     """Returns electrified arrow image for a given arrow image or None if that wasn't an arrow"""
@@ -219,7 +222,7 @@ def deelectrifyArrowCell(electrifiedArrowCell):
 def arrow_behaviour(current_cell):
     affected_cells = []
 
-    if one_back_from(current_cell).image in electrified_cells:
+    if oneBackFrom(current_cell).image in electrified_cells:
         affected_cells += electrifyArrowCell(current_cell)
 
     return affected_cells
@@ -227,12 +230,12 @@ def arrow_behaviour(current_cell):
 def electrified_arrow_behaviour(current_cell):
     affected_cells = []
 
-    if one_back_from(current_cell).image not in electrified_cells:
+    if oneBackFrom(current_cell).image not in electrified_cells:
         affected_cells += deelectrifyArrowCell(current_cell)
         
     return affected_cells
 
-def update_grid():
+def logic():
     affected_cells = []
 
     for y in range(0, len(grid)):
@@ -256,7 +259,7 @@ def buttons_reaction(event):
 
 def tick():
     """Main app timer handler: called up each tick and provides time concept for updates"""
-    update_grid()
+    logic()
     tk.after(500, tick)
 
 tk.bind('<Button-1>', buttons_reaction)
