@@ -157,35 +157,35 @@ class CellAt(AffectedCell): # I rename AffectedCell to CellAt for readability
     def __init__(self, x, y):
         AffectedCell.__init__(self, x, y, grid[y][x])
 
-def oneUpFrom(fromCell):
+def one_up_from(fromCell):
     if fromCell.y == 0:
         return None
     return CellAt(fromCell.x, fromCell.y - 1)
 
-def oneLeftFrom(fromCell):
+def one_left_from(fromCell):
     if fromCell.x == 0:
         return None
     return CellAt(fromCell.x - 1, fromCell.y)
 
-def oneRightFrom(fromCell):
+def one_right_from(fromCell):
     if fromCell.x == len(grid[0]) - 1:
         return None
     return CellAt(fromCell.x + 1, fromCell.y)
 
-def oneDownFrom(fromCell):
+def one_left_from(fromCell):
     if fromCell.y == len(grid) - 1:
         return None
     return CellAt(fromCell.x, fromCell.y + 1)
 
-def oneBackFrom(fromCell):
+def one_back_from(fromCell):
     if fromCell.image == arrowPointingRight or fromCell.image == electrifiedArrowPointingRight:
-        return oneLeftFrom(fromCell)
+        return one_left_from(fromCell)
     elif fromCell.image == arrowPointingDown or fromCell.image == electrifiedArrowPointingDown:
-        return oneUpFrom(fromCell)
+        return one_up_from(fromCell)
     elif fromCell.image == arrowPointingLeft or fromCell.image == electrifiedArrowPointingLeft:
-        return oneRightFrom(fromCell)
+        return one_right_from(fromCell)
     elif fromCell.image == arrowPointingUp or fromCell.image == electrifiedArrowPointingUp:
-        return oneDownFrom(fromCell)
+        return one_left_from(fromCell)
 
 def electrifyArrowCell(arrowCell):
     """Returns electrified arrow image for a given arrow image or None if that wasn't an arrow"""
@@ -217,16 +217,20 @@ def deelectrifyArrowCell(electrifiedArrowCell):
 
 
 def arrow_behaviour(current_cell):
-    if oneBackFrom(current_cell).image in electrified_cells:
-        return [electrifyArrowCell(current_cell)]
+    affected_cells = []
 
-    return []
+    if one_back_from(current_cell).image in electrified_cells:
+        affected_cells += electrifyArrowCell(current_cell)
+
+    return affected_cells
 
 def electrified_arrow_behaviour(current_cell):
-    if oneBackFrom(current_cell).image not in electrified_cells:
-        return [deelectrifyArrowCell(current_cell)]
+    affected_cells = []
+
+    if one_back_from(current_cell).image not in electrified_cells:
+        affected_cells += deelectrifyArrowCell(current_cell)
         
-    return []
+    return affected_cells
 
 def update_grid():
     affected_cells = []
