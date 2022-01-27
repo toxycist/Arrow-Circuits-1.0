@@ -26,7 +26,7 @@ img_width = emptyCell.width()
 img_height = emptyCell.height()
 window_width = img_width * 33
 window_height = img_height * 18
-#image resolution - width=57 x height=57
+#image resolution - width=58 x height=58
 
 tk.geometry("{}x{}".format(window_width, window_height))
 
@@ -118,13 +118,13 @@ menuButtonEraser = Button(tk, image = menuIconEraser, command = lambda: select_t
 menuButtonEraser.place(x=50, y= img_height * 15.5)
 
 menuButtonCreateGenerator = Button(tk, image = menuIconCreateGenerator, command = lambda: select_tool(make_image_tool(generator)))
-menuButtonCreateGenerator.place(x=214, y= img_height * 15.5)
+menuButtonCreateGenerator.place(x=216, y= img_height * 15.5)
 
 menuButtonRotator = Button(tk, image = menuIconRotator, command = lambda: select_tool(make_rotator_tool()))
-menuButtonRotator.place(x=378, y= img_height * 15.5)
+menuButtonRotator.place(x=380, y= img_height * 15.5)
 
 menuButtonArrow = Button(tk, image = menuIconArrow, command = lambda: select_tool(make_image_tool(arrowPointingUp)))
-menuButtonArrow.place(x=542, y= img_height * 15.5)
+menuButtonArrow.place(x=544, y= img_height * 15.5)
 
 #LOGIC
 
