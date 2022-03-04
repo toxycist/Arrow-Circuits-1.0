@@ -1,7 +1,6 @@
 import pyautogui as guy
 from images import *
 
-tk = Tk()
 tk['bg'] = '#ffffff'
 tk.title('Arrow Circuits')
 tk.iconphoto(False, appIcon)
@@ -84,11 +83,17 @@ def make_rotator_tool():
         try:
             arrows = [arrowPointingUp, arrowPointingRight, arrowPointingDown, arrowPointingLeft]
             electrified_arrows = [electrifiedArrowPointingUp, electrifiedArrowPointingRight, electrifiedArrowPointingDown, electrifiedArrowPointingLeft]
+            edges = [edgePointingFromDownLeft, edgePointingFromDownRight, edgePointingFromLeftDown, edgePointingFromLeftUp, edgePointingFromRightDown, edgePointingFromRightUp, edgePointingFromUpLeft, edgePointingFromUpRight]
+            electrified_edges = [electrifiedEdgePointingFromDownLeft, electrifiedEdgePointingFromDownRight, electrifiedEdgePointingFromLeftDown, electrifiedEdgePointingFromLeftUp, electrifiedEdgePointingFromRightDown, electrifiedEdgePointingFromRightUp, electrifiedEdgePointingFromUpLeft, electrifiedEdgePointingFromUpRight]
             current_cell_image = grid[y][x]
             if current_cell_image in electrified_arrows:
                 next_image = electrified_arrows[(electrified_arrows.index(current_cell_image) + 1) % len(arrows)]
             elif current_cell_image in arrows:
                 next_image = arrows[(arrows.index(current_cell_image) + 1) % len(arrows)]
+            elif current_cell_image in edges:
+                next_image = edges[(edges.index(current_cell_image) + 1) % len(edges)]
+            elif current_cell_image in electrified_edges:
+                next_image = electrified_edges[(electrified_edges.index(current_cell_image) + 1) % len(electrified_edges)]
             else:
                 print("This tool isn't compatible with that cell")
                 return
@@ -99,35 +104,22 @@ def make_rotator_tool():
     return rotator_tool 
 
 menuButtonEraser = Button(tk, image = menuIconEraser, command = lambda: select_tool(make_image_tool(emptyCell)))
-menuButtonEraser.place(x=50, y= img_height * 15.5)
+menuButtonEraser.place(x=50, y=img_height * 15.5)
 
 menuButtonCreateGenerator = Button(tk, image = menuIconCreateGenerator, command = lambda: select_tool(make_image_tool(generator)))
-menuButtonCreateGenerator.place(x=216, y= img_height * 15.5)
+menuButtonCreateGenerator.place(x=216, y=img_height * 15.5)
 
 menuButtonRotator = Button(tk, image = menuIconRotator, command = lambda: select_tool(make_rotator_tool()))
-menuButtonRotator.place(x=380, y= img_height * 15.5)
+menuButtonRotator.place(x=380, y=img_height * 15.5)
 
 menuButtonArrow = Button(tk, image = menuIconArrow, command = lambda: select_tool(make_image_tool(arrowPointingUp)))
-menuButtonArrow.place(x=544, y= img_height * 15.5)
+menuButtonArrow.place(x=544, y=img_height * 15.5)
+
+menuButtonEdge = Button(tk, image = menuIconEdge, command = lambda: select_tool(make_image_tool(edgePointingFromLeftUp)))
+menuButtonEdge.place(x=708, y=img_height * 15.5)
 
 #LOGIC
 
-
-arrows = [arrowPointingUp,
-          arrowPointingRight,
-          arrowPointingDown,
-          arrowPointingLeft]
-
-electrified_arrows = [electrifiedArrowPointingUp,
-                      electrifiedArrowPointingRight,
-                      electrifiedArrowPointingLeft,
-                      electrifiedArrowPointingDown]
-
-electrified_cells = [electrifiedArrowPointingUp, 
-                     electrifiedArrowPointingRight, 
-                     electrifiedArrowPointingDown,
-                     electrifiedArrowPointingLeft, 
-                     generator]
 class AffectedCell(object):
     def __init__(self, x, y, image):
         self.x = x
@@ -140,39 +132,59 @@ class AffectedCell(object):
 def make_affected_cell(x, y, image):
     return AffectedCell(x,y, image)
 
-class CellAt(AffectedCell): # I rename AffectedCell to CellAt for readability
+class CellAt(AffectedCell):
     def __init__(self, x, y):
         AffectedCell.__init__(self, x, y, grid[y][x])
 
-def oneUpFrom(fromCell):
-    if fromCell.y == 0:
+def oneUpFrom(cell):
+    if cell.y == 0:
         return None
-    return CellAt(fromCell.x, fromCell.y - 1)
+    return CellAt(cell.x, cell.y - 1)
 
-def oneLeftFrom(fromCell):
-    if fromCell.x == 0:
+def oneLeftFrom(cell):
+    if cell.x == 0:
         return None
-    return CellAt(fromCell.x - 1, fromCell.y)
+    return CellAt(cell.x - 1, cell.y)
 
-def oneRightFrom(fromCell):
-    if fromCell.x == len(grid[0]) - 1:
+def oneRightFrom(cell):
+    if cell.x == len(grid[0]) - 1:
         return None
-    return CellAt(fromCell.x + 1, fromCell.y)
+    return CellAt(cell.x + 1, cell.y)
 
-def oneDownFrom(fromCell):
-    if fromCell.y == len(grid) - 1:
+def oneDownFrom(cell):
+    if cell.y == len(grid) - 1:
         return None
-    return CellAt(fromCell.x, fromCell.y + 1)
+    return CellAt(cell.x, cell.y + 1)
 
-def oneBackFrom(fromCell):
-    if fromCell.image == arrowPointingRight or fromCell.image == electrifiedArrowPointingRight:
-        return oneLeftFrom(fromCell)
-    elif fromCell.image == arrowPointingDown or fromCell.image == electrifiedArrowPointingDown:
-        return oneUpFrom(fromCell)
-    elif fromCell.image == arrowPointingLeft or fromCell.image == electrifiedArrowPointingLeft:
-        return oneRightFrom(fromCell)
-    elif fromCell.image == arrowPointingUp or fromCell.image == electrifiedArrowPointingUp:
-        return oneDownFrom(fromCell)
+def oneBackFrom(cell):
+    if cell.image.gets == "left":
+        return oneLeftFrom(cell)
+    elif cell.image.gets == "up":
+        return oneUpFrom(cell)
+    elif cell.image.gets == "right":
+        return oneRightFrom(cell)
+    elif cell.image.gets == "down":
+        return oneDownFrom(cell)
+
+def oneFrontFrom(cell):
+    if cell.image.brings == "right":
+        return oneRightFrom(cell)
+    elif cell.image.brings == "down":
+        return oneDownFrom(cell)
+    elif cell.image.brings == "left":
+        return oneLeftFrom(cell)
+    elif cell.image.brings == "up":
+        return oneUpFrom(cell)
+
+def invert_direction(direction):
+    if direction == "right":
+        return "left"
+    elif direction == "left":
+        return "right"
+    elif direction == "up":
+        return "down"
+    elif direction == "down":
+        return "up"
 
 def electrifyArrowCell(arrowCell):
     """Returns electrified arrow image for a given arrow image or None if that wasn't an arrow"""
@@ -180,7 +192,15 @@ def electrifyArrowCell(arrowCell):
         arrowPointingDown: electrifiedArrowPointingDown,
         arrowPointingRight: electrifiedArrowPointingRight,
         arrowPointingLeft: electrifiedArrowPointingLeft,
-        arrowPointingUp: electrifiedArrowPointingUp
+        arrowPointingUp: electrifiedArrowPointingUp,
+        edgePointingFromDownLeft: electrifiedEdgePointingFromDownLeft,
+        edgePointingFromDownRight: electrifiedEdgePointingFromDownRight,
+        edgePointingFromLeftDown: electrifiedEdgePointingFromLeftDown,
+        edgePointingFromLeftUp: electrifiedEdgePointingFromLeftUp,
+        edgePointingFromRightDown: electrifiedEdgePointingFromRightDown,
+        edgePointingFromRightUp: electrifiedEdgePointingFromRightUp,
+        edgePointingFromUpLeft: electrifiedEdgePointingFromUpLeft,
+        edgePointingFromUpRight: electrifiedEdgePointingFromUpRight
     }
 
     if not electrifiedImage.__contains__(arrowCell.image):
@@ -194,7 +214,15 @@ def deelectrifyArrowCell(electrifiedArrowCell):
         electrifiedArrowPointingDown: arrowPointingDown,
         electrifiedArrowPointingRight: arrowPointingRight,
         electrifiedArrowPointingLeft: arrowPointingLeft,
-        electrifiedArrowPointingUp: arrowPointingUp
+        electrifiedArrowPointingUp: arrowPointingUp,
+        electrifiedEdgePointingFromDownLeft: edgePointingFromDownLeft,
+        electrifiedEdgePointingFromDownRight: edgePointingFromDownRight,
+        electrifiedEdgePointingFromLeftDown: edgePointingFromLeftDown,
+        electrifiedEdgePointingFromLeftUp: edgePointingFromLeftUp,
+        electrifiedEdgePointingFromRightDown: edgePointingFromRightDown,
+        electrifiedEdgePointingFromRightUp: edgePointingFromRightUp,
+        electrifiedEdgePointingFromUpLeft: edgePointingFromUpLeft,
+        electrifiedEdgePointingFromUpRight: edgePointingFromUpRight 
     }
 
     if not arrowImage.__contains__(electrifiedArrowCell.image):
@@ -203,16 +231,25 @@ def deelectrifyArrowCell(electrifiedArrowCell):
     return [AffectedCell(electrifiedArrowCell.x, electrifiedArrowCell.y, arrowImage[electrifiedArrowCell.image])]
 
 
-def arrow_behaviour(current_cell):
+def generator_behaviour(current_cell):
     affected_cells = []
 
-    if oneBackFrom(current_cell).image in electrified_cells:
-        affected_cells += electrifyArrowCell(current_cell)
+    if oneLeftFrom(current_cell).image.gets == "right":
+        affected_cells += electrifyArrowCell(oneLeftFrom(current_cell))
+    if oneRightFrom(current_cell).image.gets == "left":
+        affected_cells += electrifyArrowCell(oneRightFrom(current_cell))
+    if oneUpFrom(current_cell).image.gets == "down":
+        affected_cells += electrifyArrowCell(oneUpFrom(current_cell))
+    if oneDownFrom(current_cell).image.gets == "up":
+        affected_cells += electrifyArrowCell(oneDownFrom(current_cell))
 
     return affected_cells
 
 def electrified_arrow_behaviour(current_cell):
     affected_cells = []
+
+    if oneFrontFrom(current_cell).image in arrows and oneFrontFrom(current_cell).image.gets == invert_direction(current_cell.image.brings):
+        affected_cells += electrifyArrowCell(oneFrontFrom(current_cell))
 
     if oneBackFrom(current_cell).image not in electrified_cells:
         affected_cells += deelectrifyArrowCell(current_cell)
@@ -225,8 +262,8 @@ def logic():
     for y in range(0, len(grid)):
         for x in range(0, len(grid[y])):
             cell = CellAt(x,y)
-            if cell.image in arrows :
-                affected_cells += arrow_behaviour(cell)
+            if cell.image == generator:
+                affected_cells += generator_behaviour(cell)
             if cell.image in electrified_arrows:
                 affected_cells += electrified_arrow_behaviour(cell)
 
