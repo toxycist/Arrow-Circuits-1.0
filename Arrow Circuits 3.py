@@ -78,8 +78,8 @@ def select_tool(tool):
     current_tool = tool
     print(f"Selected tool: {tool.name}")
 
-def make_rotator_tool():
-    def rotator_tool(x, y):
+def make_configurator_tool():
+    def configurator_tool(x, y):
         try:
             arrows = [arrowPointingUp, arrowPointingRight, arrowPointingDown, arrowPointingLeft]
             electrified_arrows = [electrifiedArrowPointingUp, electrifiedArrowPointingRight, electrifiedArrowPointingDown, electrifiedArrowPointingLeft]
@@ -95,13 +95,13 @@ def make_rotator_tool():
             elif current_cell_image in electrified_edges:
                 next_image = electrified_edges[(electrified_edges.index(current_cell_image) + 1) % len(electrified_edges)]
             else:
-                print("This tool isn't compatible with that cell")
+                print("Configurator isn't compatible with that cell")
                 return
             set_cell(grid, x, y, next_image)
         except (ValueError, IndexError):
             return
-    rotator_tool.name = "Rotator"
-    return rotator_tool 
+    configurator_tool.name = "Configurator"
+    return configurator_tool 
 
 menuButtonEraser = Button(tk, image = menuIconEraser, command = lambda: select_tool(make_image_tool(emptyCell)))
 menuButtonEraser.place(x=50, y=img_height * 15.5)
@@ -109,8 +109,8 @@ menuButtonEraser.place(x=50, y=img_height * 15.5)
 menuButtonCreateGenerator = Button(tk, image = menuIconCreateGenerator, command = lambda: select_tool(make_image_tool(generator)))
 menuButtonCreateGenerator.place(x=216, y=img_height * 15.5)
 
-menuButtonRotator = Button(tk, image = menuIconRotator, command = lambda: select_tool(make_rotator_tool()))
-menuButtonRotator.place(x=380, y=img_height * 15.5)
+menuButtonconfigurator = Button(tk, image = menuIconConfigurator, command = lambda: select_tool(make_configurator_tool()))
+menuButtonconfigurator.place(x=380, y=img_height * 15.5)
 
 menuButtonArrow = Button(tk, image = menuIconArrow, command = lambda: select_tool(make_image_tool(arrowPointingUp)))
 menuButtonArrow.place(x=544, y=img_height * 15.5)
@@ -118,7 +118,51 @@ menuButtonArrow.place(x=544, y=img_height * 15.5)
 menuButtonEdge = Button(tk, image = menuIconEdge, command = lambda: select_tool(make_image_tool(edgePointingFromLeftUp)))
 menuButtonEdge.place(x=708, y=img_height * 15.5)
 
+menuButtonInverter = Button(tk, image = menuIconInverter, command = lambda: select_tool(make_image_tool(inverter)))
+menuButtonInverter.place(x=872, y=img_height * 15.5)
+
 #LOGIC
+
+arrows = [arrowPointingUp,
+          arrowPointingRight,
+          arrowPointingDown,
+          arrowPointingLeft,
+          edgePointingFromDownLeft,
+          edgePointingFromDownRight,
+          edgePointingFromLeftDown,
+          edgePointingFromLeftUp,
+          edgePointingFromRightDown,
+          edgePointingFromRightUp,
+          edgePointingFromUpLeft,
+          edgePointingFromUpRight]
+
+electrified_arrows = [electrifiedArrowPointingUp,
+                      electrifiedArrowPointingRight,
+                      electrifiedArrowPointingLeft,
+                      electrifiedArrowPointingDown,
+                      electrifiedEdgePointingFromDownLeft,
+                      electrifiedEdgePointingFromDownRight,
+                      electrifiedEdgePointingFromLeftDown,
+                      electrifiedEdgePointingFromLeftUp,
+                      electrifiedEdgePointingFromRightDown,
+                      electrifiedEdgePointingFromRightUp,
+                      electrifiedEdgePointingFromUpLeft,
+                      electrifiedEdgePointingFromUpRight]
+
+electrified_cells = [electrifiedArrowPointingUp,
+                     electrifiedArrowPointingRight,
+                     electrifiedArrowPointingLeft,
+                     electrifiedArrowPointingDown,
+                     electrifiedEdgePointingFromDownLeft,
+                     electrifiedEdgePointingFromDownRight,
+                     electrifiedEdgePointingFromLeftDown,
+                     electrifiedEdgePointingFromLeftUp,
+                     electrifiedEdgePointingFromRightDown,
+                     electrifiedEdgePointingFromRightUp,
+                     electrifiedEdgePointingFromUpLeft,
+                     electrifiedEdgePointingFromUpRight,
+                     electrifiedInverter,
+                     generator]
 
 class AffectedCell(object):
     def __init__(self, x, y, image):
@@ -167,13 +211,13 @@ def oneBackFrom(cell):
         return oneDownFrom(cell)
 
 def oneFrontFrom(cell):
-    if cell.image.brings == "right":
+    if cell.image.gives == "right":
         return oneRightFrom(cell)
-    elif cell.image.brings == "down":
+    elif cell.image.gives == "down":
         return oneDownFrom(cell)
-    elif cell.image.brings == "left":
+    elif cell.image.gives == "left":
         return oneLeftFrom(cell)
-    elif cell.image.brings == "up":
+    elif cell.image.gives == "up":
         return oneUpFrom(cell)
 
 def invert_direction(direction):
@@ -186,8 +230,8 @@ def invert_direction(direction):
     elif direction == "down":
         return "up"
 
-def electrifyArrowCell(arrowCell):
-    """Returns electrified arrow image for a given arrow image or None if that wasn't an arrow"""
+def electrifyCell(cell):
+    """Returns electrified image for a given image or None if this image has no electrified state"""
     electrifiedImage = {
         arrowPointingDown: electrifiedArrowPointingDown,
         arrowPointingRight: electrifiedArrowPointingRight,
@@ -200,17 +244,18 @@ def electrifyArrowCell(arrowCell):
         edgePointingFromRightDown: electrifiedEdgePointingFromRightDown,
         edgePointingFromRightUp: electrifiedEdgePointingFromRightUp,
         edgePointingFromUpLeft: electrifiedEdgePointingFromUpLeft,
-        edgePointingFromUpRight: electrifiedEdgePointingFromUpRight
+        edgePointingFromUpRight: electrifiedEdgePointingFromUpRight,
+        inverter: electrifiedInverter
     }
 
-    if not electrifiedImage.__contains__(arrowCell.image):
+    if not electrifiedImage.__contains__(cell.image):
         return []
 
-    return [AffectedCell(arrowCell.x, arrowCell.y, electrifiedImage[arrowCell.image])]
+    return [AffectedCell(cell.x, cell.y, electrifiedImage[cell.image])]
 
-def deelectrifyArrowCell(electrifiedArrowCell):
-    """Returns regular arrow image for a given electrified arrow image or None if that wasn't an electrified arrow"""
-    arrowImage = {
+def deelectrifyCell(electrifiedCell):
+    """Returns regular image for a given electrified image or None if this image has no regular state"""
+    image = {
         electrifiedArrowPointingDown: arrowPointingDown,
         electrifiedArrowPointingRight: arrowPointingRight,
         electrifiedArrowPointingLeft: arrowPointingLeft,
@@ -222,38 +267,85 @@ def deelectrifyArrowCell(electrifiedArrowCell):
         electrifiedEdgePointingFromRightDown: edgePointingFromRightDown,
         electrifiedEdgePointingFromRightUp: edgePointingFromRightUp,
         electrifiedEdgePointingFromUpLeft: edgePointingFromUpLeft,
-        electrifiedEdgePointingFromUpRight: edgePointingFromUpRight 
+        electrifiedEdgePointingFromUpRight: edgePointingFromUpRight,
+        electrifiedInverter: inverter
     }
 
-    if not arrowImage.__contains__(electrifiedArrowCell.image):
+    if not image.__contains__(electrifiedCell.image):
         return []
 
-    return [AffectedCell(electrifiedArrowCell.x, electrifiedArrowCell.y, arrowImage[electrifiedArrowCell.image])]
+    return [AffectedCell(electrifiedCell.x, electrifiedCell.y, image[electrifiedCell.image])]
 
+def check_cell_for_getting_connections(cell):
+    connections = []
+
+    if oneLeftFrom(cell).image.gets == "right":
+        connections += [oneLeftFrom(cell)]
+    if oneRightFrom(cell).image.gets == "left":
+        connections += [oneRightFrom(cell)]
+    if oneUpFrom(cell).image.gets == "down":
+        connections += [oneUpFrom(cell)]
+    if oneDownFrom(cell).image.gets == "up":
+        connections += [oneDownFrom(cell)]
+    return connections
+
+def check_cell_for_bringing_connections(cell):
+    connections = []
+
+    if oneLeftFrom(cell).image.gives == "right":
+        connections += [oneLeftFrom(cell)]
+    if oneRightFrom(cell).image.gives == "left":
+        connections += [oneRightFrom(cell)]
+    if oneUpFrom(cell).image.gives == "down":
+        connections += [oneUpFrom(cell)]
+    if oneDownFrom(cell).image.gives == "up":
+        connections += [oneDownFrom(cell)]
+    
+    return connections
 
 def generator_behaviour(current_cell):
     affected_cells = []
 
-    if oneLeftFrom(current_cell).image.gets == "right":
-        affected_cells += electrifyArrowCell(oneLeftFrom(current_cell))
-    if oneRightFrom(current_cell).image.gets == "left":
-        affected_cells += electrifyArrowCell(oneRightFrom(current_cell))
-    if oneUpFrom(current_cell).image.gets == "down":
-        affected_cells += electrifyArrowCell(oneUpFrom(current_cell))
-    if oneDownFrom(current_cell).image.gets == "up":
-        affected_cells += electrifyArrowCell(oneDownFrom(current_cell))
+    for connection in check_cell_for_getting_connections(current_cell):
+        affected_cells += electrifyCell(connection)
 
     return affected_cells
 
 def electrified_arrow_behaviour(current_cell):
     affected_cells = []
 
-    if oneFrontFrom(current_cell).image in arrows and oneFrontFrom(current_cell).image.gets == invert_direction(current_cell.image.brings):
-        affected_cells += electrifyArrowCell(oneFrontFrom(current_cell))
+    if oneFrontFrom(current_cell).image.gets == invert_direction(current_cell.image.gives):
+        affected_cells += electrifyCell(oneFrontFrom(current_cell))
 
     if oneBackFrom(current_cell).image not in electrified_cells:
-        affected_cells += deelectrifyArrowCell(current_cell)
+        affected_cells += deelectrifyCell(current_cell)
         
+    return affected_cells
+
+def inverter_behaviour(current_cell):
+    affected_cells = []
+
+    for connection in check_cell_for_bringing_connections(current_cell):
+        if connection.image.name in [element.name for element in electrified_arrows]:
+            return affected_cells
+        else:
+            affected_cells += electrifyCell(current_cell)
+            return affected_cells
+            
+    affected_cells += electrifyCell(current_cell)
+    return affected_cells
+
+def electrified_inverter_behaviour(current_cell):
+    affected_cells = []
+
+    for connection in check_cell_for_getting_connections(current_cell):
+        affected_cells += electrifyCell(connection)
+    
+    for connection in check_cell_for_bringing_connections(current_cell):
+        if connection.image.name in [element.name for element in electrified_arrows]:
+            affected_cells += deelectrifyCell(current_cell)
+            break
+    
     return affected_cells
 
 def logic():
@@ -266,6 +358,10 @@ def logic():
                 affected_cells += generator_behaviour(cell)
             if cell.image in electrified_arrows:
                 affected_cells += electrified_arrow_behaviour(cell)
+            if cell.image == electrifiedInverter:
+                affected_cells += electrified_inverter_behaviour(cell)
+            if cell.image == inverter:
+                affected_cells += inverter_behaviour(cell)
 
     for cell in affected_cells:
         set_cell(grid, cell.x, cell.y, cell.image)
