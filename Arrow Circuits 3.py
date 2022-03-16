@@ -5,22 +5,29 @@ tk['bg'] = '#ffffff'
 tk.title('Arrow Circuits')
 tk.iconphoto(False, appIcon)
 
-img_width = emptyCell.width()
-img_height = emptyCell.height()
-window_width = img_width * 33
-window_height = img_height * 18
+IMG_WIDTH = emptyCell.width()
+IMG_HEIGHT = emptyCell.height()
+WINDOW_WIDTH = IMG_WIDTH * 33
+WINDOW_HEIGHT = IMG_HEIGHT * 18
 #image resolution - width=58 x height=58
 
-tk.geometry("{}x{}".format(window_width, window_height))
+tk.geometry("{}x{}".format(WINDOW_WIDTH, WINDOW_HEIGHT))
 
 tk.resizable(width = False, height = False)
 
-canvas = Canvas(tk, height = window_height, width = window_width)
-canvas.pack()
+CANVAS = Canvas(tk, height = WINDOW_HEIGHT, width = WINDOW_WIDTH)
+CANVAS.pack()
 
 #GRID
+
+def lower_first_letter(string):
+   if len(string) == 0:
+      return string
+   else:
+      return string[0].lower() + string[1:]
+
 def coordinates_to_img_number(x, y):
-    return (int(x / img_width), int(y / img_height))
+    return (int(x / IMG_WIDTH), int(y / IMG_HEIGHT))
 
 def generate_list(n, val):
     result = []
@@ -29,8 +36,8 @@ def generate_list(n, val):
     return result
 
 grid_size = (
-    int(window_width / img_width) ,                    # width
-    int((window_height - img_height * 3) / img_height) # height
+    int(WINDOW_WIDTH / IMG_WIDTH) ,                    # width
+    int((WINDOW_HEIGHT - IMG_HEIGHT * 3) / IMG_HEIGHT) # height
 )
 
 def make_grid(width, height):
@@ -47,7 +54,7 @@ def reset_grid(grid):
             grid[y][x] = emptyCell
 
 def draw_image(imgNumber, image):
-    canvas.create_image(imgNumber[0] * img_width, imgNumber[1] * img_height, anchor = NW, image = image)
+    CANVAS.create_image(imgNumber[0] * IMG_WIDTH, imgNumber[1] * IMG_HEIGHT, anchor = NW, image = image)
 
 def draw_grid(grid):
     for iy in range (0, len(grid)):
@@ -68,7 +75,6 @@ draw_grid(grid)
 
 def make_image_tool(image):
     image_tool = lambda x,y: set_cell(grid, x, y, image)
-    image_tool.name = image.name
     return image_tool
 
 current_tool = make_image_tool(emptyCell)
@@ -76,7 +82,6 @@ current_tool = make_image_tool(emptyCell)
 def select_tool(tool):
     global current_tool
     current_tool = tool
-    print(f"Selected tool: {tool.name}")
 
 def make_configurator_tool():
     def configurator_tool(x, y):
@@ -94,32 +99,36 @@ def make_configurator_tool():
                 next_image = edges[(edges.index(current_cell_image) + 1) % len(edges)]
             elif current_cell_image in electrified_edges:
                 next_image = electrified_edges[(electrified_edges.index(current_cell_image) + 1) % len(electrified_edges)]
+            elif current_cell_image in empty_conveyors:
+                next_image = empty_conveyors[(empty_conveyors.index(current_cell_image) + 1) % len(empty_conveyors)]
             else:
                 print("Configurator isn't compatible with that cell")
                 return
             set_cell(grid, x, y, next_image)
         except (ValueError, IndexError):
             return
-    configurator_tool.name = "Configurator"
     return configurator_tool 
 
 menuButtonEraser = Button(tk, image = menuIconEraser, command = lambda: select_tool(make_image_tool(emptyCell)))
-menuButtonEraser.place(x=50, y=img_height * 15.5)
+menuButtonEraser.place(x=50, y=IMG_HEIGHT * 15.5)
 
-menuButtonCreateGenerator = Button(tk, image = menuIconCreateGenerator, command = lambda: select_tool(make_image_tool(generator)))
-menuButtonCreateGenerator.place(x=216, y=img_height * 15.5)
+menuButtonGenerator = Button(tk, image = menuIconGenerator, command = lambda: select_tool(make_image_tool(generator)))
+menuButtonGenerator.place(x=216, y=IMG_HEIGHT * 15.5)
 
 menuButtonconfigurator = Button(tk, image = menuIconConfigurator, command = lambda: select_tool(make_configurator_tool()))
-menuButtonconfigurator.place(x=380, y=img_height * 15.5)
+menuButtonconfigurator.place(x=380, y=IMG_HEIGHT * 15.5)
 
 menuButtonArrow = Button(tk, image = menuIconArrow, command = lambda: select_tool(make_image_tool(arrowPointingUp)))
-menuButtonArrow.place(x=544, y=img_height * 15.5)
+menuButtonArrow.place(x=544, y=IMG_HEIGHT * 15.5)
 
 menuButtonEdge = Button(tk, image = menuIconEdge, command = lambda: select_tool(make_image_tool(edgePointingFromLeftUp)))
-menuButtonEdge.place(x=708, y=img_height * 15.5)
+menuButtonEdge.place(x=708, y=IMG_HEIGHT * 15.5)
 
 menuButtonInverter = Button(tk, image = menuIconInverter, command = lambda: select_tool(make_image_tool(inverter)))
-menuButtonInverter.place(x=872, y=img_height * 15.5)
+menuButtonInverter.place(x=872, y=IMG_HEIGHT * 15.5)
+
+menuButtonConveyor = Button(tk, image = menuIconConveyor, command = lambda: select_tool(make_image_tool(conveyorPointingUp)))
+menuButtonConveyor.place(x=1036, y=IMG_HEIGHT * 15.5)
 
 #LOGIC
 
@@ -164,6 +173,134 @@ electrified_cells = [electrifiedArrowPointingUp,
                      electrifiedInverter,
                      generator]
 
+empty_conveyors = [conveyorPointingUp, 
+                   conveyorPointingRight, 
+                   conveyorPointingDown, 
+                   conveyorPointingLeft]
+
+conveyors_containing_cells = [conveyorPointingUpContainingGenerator,
+                              conveyorPointingUpContainingArrowPointingUp,
+                              conveyorPointingUpContainingArrowPointingDown,
+                              conveyorPointingUpContainingArrowPointingLeft,
+                              conveyorPointingUpContainingArrowPointingRight,
+                              conveyorPointingUpContainingElectrifiedArrowPointingUp,
+                              conveyorPointingUpContainingElectrifiedArrowPointingDown,
+                              conveyorPointingUpContainingElectrifiedArrowPointingLeft,
+                              conveyorPointingUpContainingElectrifiedArrowPointingRight,
+                              conveyorPointingUpContainingEdgePointingFromDownLeft,
+                              conveyorPointingUpContainingEdgePointingFromDownRight,
+                              conveyorPointingUpContainingEdgePointingFromLeftDown,
+                              conveyorPointingUpContainingEdgePointingFromLeftUp,
+                              conveyorPointingUpContainingEdgePointingFromRightDown,
+                              conveyorPointingUpContainingEdgePointingFromRightUp,
+                              conveyorPointingUpContainingEdgePointingFromUpLeft,
+                              conveyorPointingUpContainingEdgePointingFromUpRight,
+                              conveyorPointingUpContainingElectrifiedEdgePointingFromDownLeft,
+                              conveyorPointingUpContainingElectrifiedEdgePointingFromDownRight,
+                              conveyorPointingUpContainingElectrifiedEdgePointingFromLeftDown,
+                              conveyorPointingUpContainingElectrifiedEdgePointingFromLeftUp,
+                              conveyorPointingUpContainingElectrifiedEdgePointingFromRightDown,
+                              conveyorPointingUpContainingElectrifiedEdgePointingFromRightUp,
+                              conveyorPointingUpContainingElectrifiedEdgePointingFromUpLeft,
+                              conveyorPointingUpContainingElectrifiedEdgePointingFromUpRight,
+                              conveyorPointingUpContainingInverter,
+                              conveyorPointingUpContainingElectrifiedInverter,
+                              conveyorPointingUpContainingConveyorPointingUp,
+                              conveyorPointingUpContainingConveyorPointingLeft,
+                              conveyorPointingUpContainingConveyorPointingDown,
+                              conveyorPointingUpContainingConveyorPointingRight,
+                              conveyorPointingLeftContainingGenerator,
+                              conveyorPointingLeftContainingArrowPointingUp,
+                              conveyorPointingLeftContainingArrowPointingDown,
+                              conveyorPointingLeftContainingArrowPointingLeft,
+                              conveyorPointingLeftContainingArrowPointingRight,
+                              conveyorPointingLeftContainingElectrifiedArrowPointingUp,
+                              conveyorPointingLeftContainingElectrifiedArrowPointingDown,
+                              conveyorPointingLeftContainingElectrifiedArrowPointingLeft,
+                              conveyorPointingLeftContainingElectrifiedArrowPointingRight,
+                              conveyorPointingLeftContainingEdgePointingFromDownLeft,
+                              conveyorPointingLeftContainingEdgePointingFromDownRight,
+                              conveyorPointingLeftContainingEdgePointingFromLeftDown,
+                              conveyorPointingLeftContainingEdgePointingFromLeftUp,
+                              conveyorPointingLeftContainingEdgePointingFromRightDown,
+                              conveyorPointingLeftContainingEdgePointingFromRightUp,
+                              conveyorPointingLeftContainingEdgePointingFromUpLeft,
+                              conveyorPointingLeftContainingEdgePointingFromUpRight,
+                              conveyorPointingLeftContainingElectrifiedEdgePointingFromDownLeft,
+                              conveyorPointingLeftContainingElectrifiedEdgePointingFromDownRight,
+                              conveyorPointingLeftContainingElectrifiedEdgePointingFromLeftDown,
+                              conveyorPointingLeftContainingElectrifiedEdgePointingFromLeftUp,
+                              conveyorPointingLeftContainingElectrifiedEdgePointingFromRightDown,
+                              conveyorPointingLeftContainingElectrifiedEdgePointingFromRightUp,
+                              conveyorPointingLeftContainingElectrifiedEdgePointingFromUpLeft,
+                              conveyorPointingLeftContainingElectrifiedEdgePointingFromUpRight,
+                              conveyorPointingLeftContainingInverter,
+                              conveyorPointingLeftContainingElectrifiedInverter,
+                              conveyorPointingLeftContainingConveyorPointingUp,
+                              conveyorPointingLeftContainingConveyorPointingLeft,
+                              conveyorPointingLeftContainingConveyorPointingDown,
+                              conveyorPointingLeftContainingConveyorPointingRight,
+                              conveyorPointingRightContainingGenerator,
+                              conveyorPointingRightContainingArrowPointingUp,
+                              conveyorPointingRightContainingArrowPointingDown,
+                              conveyorPointingRightContainingArrowPointingLeft,
+                              conveyorPointingRightContainingArrowPointingRight,
+                              conveyorPointingRightContainingElectrifiedArrowPointingUp,
+                              conveyorPointingRightContainingElectrifiedArrowPointingLeft,
+                              conveyorPointingRightContainingElectrifiedArrowPointingRight,
+                              conveyorPointingRightContainingEdgePointingFromDownLeft,
+                              conveyorPointingRightContainingEdgePointingFromDownRight,
+                              conveyorPointingRightContainingEdgePointingFromLeftDown,
+                              conveyorPointingRightContainingEdgePointingFromLeftUp,
+                              conveyorPointingRightContainingEdgePointingFromRightDown,
+                              conveyorPointingRightContainingEdgePointingFromRightUp,
+                              conveyorPointingRightContainingEdgePointingFromUpLeft,
+                              conveyorPointingRightContainingEdgePointingFromUpRight,
+                              conveyorPointingRightContainingElectrifiedEdgePointingFromDownLeft,
+                              conveyorPointingRightContainingElectrifiedEdgePointingFromDownRight,
+                              conveyorPointingRightContainingElectrifiedEdgePointingFromLeftDown,
+                              conveyorPointingRightContainingElectrifiedEdgePointingFromLeftUp,
+                              conveyorPointingRightContainingElectrifiedEdgePointingFromRightDown,
+                              conveyorPointingRightContainingElectrifiedEdgePointingFromRightUp,
+                              conveyorPointingRightContainingElectrifiedEdgePointingFromUpLeft,
+                              conveyorPointingRightContainingElectrifiedEdgePointingFromUpRight,
+                              conveyorPointingRightContainingInverter,
+                              conveyorPointingRightContainingElectrifiedInverter,
+                              conveyorPointingRightContainingConveyorPointingUp,
+                              conveyorPointingRightContainingConveyorPointingLeft,
+                              conveyorPointingRightContainingConveyorPointingDown,
+                              conveyorPointingRightContainingConveyorPointingRight,
+                              conveyorPointingDownContainingGenerator,
+                              conveyorPointingDownContainingArrowPointingUp,
+                              conveyorPointingDownContainingArrowPointingDown,
+                              conveyorPointingDownContainingArrowPointingLeft,
+                              conveyorPointingDownContainingArrowPointingRight,
+                              conveyorPointingDownContainingElectrifiedArrowPointingUp,
+                              conveyorPointingDownContainingElectrifiedArrowPointingDown,
+                              conveyorPointingDownContainingElectrifiedArrowPointingLeft,
+                              conveyorPointingDownContainingElectrifiedArrowPointingRight,
+                              conveyorPointingDownContainingEdgePointingFromDownLeft,
+                              conveyorPointingDownContainingEdgePointingFromDownRight,
+                              conveyorPointingDownContainingEdgePointingFromLeftDown,
+                              conveyorPointingDownContainingEdgePointingFromLeftUp,
+                              conveyorPointingDownContainingEdgePointingFromRightDown,
+                              conveyorPointingDownContainingEdgePointingFromRightUp,
+                              conveyorPointingDownContainingEdgePointingFromUpLeft,
+                              conveyorPointingDownContainingElectrifiedEdgePointingFromDownLeft,
+                              conveyorPointingDownContainingElectrifiedEdgePointingFromDownRight,
+                              conveyorPointingDownContainingElectrifiedEdgePointingFromLeftDown,
+                              conveyorPointingDownContainingElectrifiedEdgePointingFromLeftUp,
+                              conveyorPointingDownContainingElectrifiedEdgePointingFromRightDown,
+                              conveyorPointingDownContainingElectrifiedEdgePointingFromRightUp,
+                              conveyorPointingDownContainingElectrifiedEdgePointingFromUpLeft,
+                              conveyorPointingDownContainingElectrifiedEdgePointingFromUpRight,
+                              conveyorPointingDownContainingInverter,
+                              conveyorPointingDownContainingElectrifiedInverter,
+                              conveyorPointingDownContainingConveyorPointingUp,
+                              conveyorPointingDownContainingConveyorPointingLeft,
+                              conveyorPointingDownContainingConveyorPointingDown,
+                              conveyorPointingDownContainingConveyorPointingRight]
+
 class AffectedCell(object):
     def __init__(self, x, y, image):
         self.x = x
@@ -180,45 +317,45 @@ class CellAt(AffectedCell):
     def __init__(self, x, y):
         AffectedCell.__init__(self, x, y, grid[y][x])
 
-def oneUpFrom(cell):
+def one_up_from(cell):
     if cell.y == 0:
         return None
     return CellAt(cell.x, cell.y - 1)
 
-def oneLeftFrom(cell):
+def one_left_from(cell):
     if cell.x == 0:
         return None
     return CellAt(cell.x - 1, cell.y)
 
-def oneRightFrom(cell):
+def one_right_from(cell):
     if cell.x == len(grid[0]) - 1:
         return None
     return CellAt(cell.x + 1, cell.y)
 
-def oneDownFrom(cell):
+def one_down_from(cell):
     if cell.y == len(grid) - 1:
         return None
     return CellAt(cell.x, cell.y + 1)
 
-def oneBackFrom(cell):
+def one_back_from(cell):
     if cell.image.gets == "left":
-        return oneLeftFrom(cell)
+        return one_left_from(cell)
     elif cell.image.gets == "up":
-        return oneUpFrom(cell)
+        return one_up_from(cell)
     elif cell.image.gets == "right":
-        return oneRightFrom(cell)
+        return one_right_from(cell)
     elif cell.image.gets == "down":
-        return oneDownFrom(cell)
+        return one_down_from(cell)
 
-def oneFrontFrom(cell):
+def one_front_from(cell):
     if cell.image.gives == "right":
-        return oneRightFrom(cell)
+        return one_right_from(cell)
     elif cell.image.gives == "down":
-        return oneDownFrom(cell)
+        return one_down_from(cell)
     elif cell.image.gives == "left":
-        return oneLeftFrom(cell)
+        return one_left_from(cell)
     elif cell.image.gives == "up":
-        return oneUpFrom(cell)
+        return one_up_from(cell)
 
 def invert_direction(direction):
     if direction == "right":
@@ -230,7 +367,7 @@ def invert_direction(direction):
     elif direction == "down":
         return "up"
 
-def electrifyCell(cell):
+def electrify_cell(cell):
     """Returns electrified image for a given image or None if this image has no electrified state"""
     electrifiedImage = {
         arrowPointingDown: electrifiedArrowPointingDown,
@@ -253,7 +390,7 @@ def electrifyCell(cell):
 
     return [AffectedCell(cell.x, cell.y, electrifiedImage[cell.image])]
 
-def deelectrifyCell(electrifiedCell):
+def deelectrify_cell(electrifiedCell):
     """Returns regular image for a given electrified image or None if this image has no regular state"""
     image = {
         electrifiedArrowPointingDown: arrowPointingDown,
@@ -279,27 +416,27 @@ def deelectrifyCell(electrifiedCell):
 def check_cell_for_getting_connections(cell):
     connections = []
 
-    if oneLeftFrom(cell).image.gets == "right":
-        connections += [oneLeftFrom(cell)]
-    if oneRightFrom(cell).image.gets == "left":
-        connections += [oneRightFrom(cell)]
-    if oneUpFrom(cell).image.gets == "down":
-        connections += [oneUpFrom(cell)]
-    if oneDownFrom(cell).image.gets == "up":
-        connections += [oneDownFrom(cell)]
+    if one_left_from(cell) != None and one_left_from(cell).image.gets == "right":
+        connections += [one_left_from(cell)]
+    if one_right_from(cell) != None and one_right_from(cell).image.gets == "left":
+        connections += [one_right_from(cell)]
+    if one_up_from(cell) != None and one_up_from(cell).image.gets == "down":
+        connections += [one_up_from(cell)]
+    if one_down_from(cell) != None and one_down_from(cell).image.gets == "up":
+        connections += [one_down_from(cell)]
     return connections
 
-def check_cell_for_bringing_connections(cell):
+def check_cell_for_giving_connections(cell):
     connections = []
 
-    if oneLeftFrom(cell).image.gives == "right":
-        connections += [oneLeftFrom(cell)]
-    if oneRightFrom(cell).image.gives == "left":
-        connections += [oneRightFrom(cell)]
-    if oneUpFrom(cell).image.gives == "down":
-        connections += [oneUpFrom(cell)]
-    if oneDownFrom(cell).image.gives == "up":
-        connections += [oneDownFrom(cell)]
+    if one_left_from(cell) != None and one_left_from(cell).image.gives == "right":
+        connections += [one_left_from(cell)]
+    if one_right_from(cell) != None and one_right_from(cell).image.gives == "left":
+        connections += [one_right_from(cell)]
+    if one_up_from(cell) != None and one_up_from(cell).image.gives == "down":
+        connections += [one_up_from(cell)]
+    if one_down_from(cell) != None and one_down_from(cell).image.gives == "up":
+        connections += [one_down_from(cell)]
     
     return connections
 
@@ -307,45 +444,63 @@ def generator_behaviour(current_cell):
     affected_cells = []
 
     for connection in check_cell_for_getting_connections(current_cell):
-        affected_cells += electrifyCell(connection)
+        affected_cells += electrify_cell(connection)
 
     return affected_cells
 
 def electrified_arrow_behaviour(current_cell):
     affected_cells = []
 
-    if oneFrontFrom(current_cell).image.gets == invert_direction(current_cell.image.gives):
-        affected_cells += electrifyCell(oneFrontFrom(current_cell))
+    if one_front_from(current_cell) != None and one_front_from(current_cell).image.gets == invert_direction(current_cell.image.gives):
+        affected_cells += electrify_cell(one_front_from(current_cell))
 
-    if oneBackFrom(current_cell).image not in electrified_cells:
-        affected_cells += deelectrifyCell(current_cell)
+    if one_back_from(current_cell) != None and one_back_from(current_cell).image not in electrified_cells:
+        affected_cells += deelectrify_cell(current_cell)
         
     return affected_cells
 
 def inverter_behaviour(current_cell):
     affected_cells = []
 
-    for connection in check_cell_for_bringing_connections(current_cell):
+    for connection in check_cell_for_giving_connections(current_cell):
         if connection.image.name in [element.name for element in electrified_arrows]:
             return affected_cells
         else:
-            affected_cells += electrifyCell(current_cell)
+            affected_cells += electrify_cell(current_cell)
             return affected_cells
             
-    affected_cells += electrifyCell(current_cell)
+    affected_cells += electrify_cell(current_cell)
     return affected_cells
 
 def electrified_inverter_behaviour(current_cell):
     affected_cells = []
 
     for connection in check_cell_for_getting_connections(current_cell):
-        affected_cells += electrifyCell(connection)
+        affected_cells += electrify_cell(connection)
     
-    for connection in check_cell_for_bringing_connections(current_cell):
+    for connection in check_cell_for_giving_connections(current_cell):
         if connection.image.name in [element.name for element in electrified_arrows]:
-            affected_cells += deelectrifyCell(current_cell)
+            affected_cells += deelectrify_cell(current_cell)
             break
     
+    return affected_cells
+
+def empty_conveyor_behaviour(current_cell):
+    affected_cells = []
+    
+    if one_back_from(current_cell) != None and one_back_from(current_cell).image.name != "EmptyCell" and one_back_from(current_cell).image not in conveyors_containing_cells:
+        affected_cells += [AffectedCell(current_cell.x, current_cell.y, eval(lower_first_letter(current_cell.image.name + "Containing" + one_back_from(current_cell).image.name)))]
+        affected_cells += [AffectedCell(one_back_from(current_cell).x, one_back_from(current_cell).y, emptyCell)]
+
+    return affected_cells
+
+def conveyor_containing_cell_behaviour(current_cell):
+    affected_cells = []
+
+    if one_front_from(current_cell) != None:
+        affected_cells += [AffectedCell(one_front_from(current_cell).x, one_front_from(current_cell).y, eval(lower_first_letter(current_cell.image.name.split("Containing")[1])))]
+        affected_cells += [AffectedCell(current_cell.x, current_cell.y, eval(lower_first_letter(current_cell.image.name.split("Containing")[0])))]
+
     return affected_cells
 
 def logic():
@@ -362,13 +517,17 @@ def logic():
                 affected_cells += electrified_inverter_behaviour(cell)
             if cell.image == inverter:
                 affected_cells += inverter_behaviour(cell)
+            if cell.image in empty_conveyors:
+                affected_cells += empty_conveyor_behaviour(cell)
+            if cell.image in conveyors_containing_cells:
+                affected_cells += conveyor_containing_cell_behaviour(cell)
 
     for cell in affected_cells:
         set_cell(grid, cell.x, cell.y, cell.image)
 
 def buttons_reaction(event):
     """ Handles a mouse click in the grid (per cell)"""
-    if event.widget != canvas:
+    if event.widget != CANVAS:
         return
 
     (x, y) = coordinates_to_img_number(event.x, event.y)
