@@ -320,20 +320,28 @@ class CellAt(AffectedCell):
 def one_up_from(cell):
     if cell.y == 0:
         return None
+    if CellAt(cell.x, cell.y - 1).image.deleted == True:
+        return None
     return CellAt(cell.x, cell.y - 1)
 
 def one_left_from(cell):
     if cell.x == 0:
+        return None
+    if CellAt(cell.x - 1, cell.y).image.deleted == True:
         return None
     return CellAt(cell.x - 1, cell.y)
 
 def one_right_from(cell):
     if cell.x == len(grid[0]) - 1:
         return None
+    if CellAt(cell.x + 1, cell.y).image.deleted == True:
+        return None
     return CellAt(cell.x + 1, cell.y)
 
 def one_down_from(cell):
     if cell.y == len(grid) - 1:
+        return None
+    if CellAt(cell.x, cell.y + 1).image.deleted == True:
         return None
     return CellAt(cell.x, cell.y + 1)
 
@@ -451,6 +459,9 @@ def generator_behaviour(current_cell):
 def electrified_arrow_behaviour(current_cell):
     affected_cells = []
 
+    if current_cell.image.deleted == True:
+        return []
+
     if one_front_from(current_cell) != None and one_front_from(current_cell).image.gets == invert_direction(current_cell.image.gives):
         affected_cells += electrify_cell(one_front_from(current_cell))
 
@@ -461,6 +472,9 @@ def electrified_arrow_behaviour(current_cell):
 
 def inverter_behaviour(current_cell):
     affected_cells = []
+
+    if current_cell.image.deleted == True:
+        return []
 
     for connection in check_cell_for_giving_connections(current_cell):
         if connection.image.name in [element.name for element in electrified_arrows]:
@@ -474,6 +488,9 @@ def inverter_behaviour(current_cell):
 
 def electrified_inverter_behaviour(current_cell):
     affected_cells = []
+
+    if current_cell.image.deleted == True:
+        return []
 
     for connection in check_cell_for_getting_connections(current_cell):
         affected_cells += electrify_cell(connection)
@@ -491,6 +508,7 @@ def empty_conveyor_behaviour(current_cell):
     if one_back_from(current_cell) != None and one_back_from(current_cell).image.name != "EmptyCell" and one_back_from(current_cell).image not in conveyors_containing_cells:
         affected_cells += [AffectedCell(current_cell.x, current_cell.y, eval(lower_first_letter(current_cell.image.name + "Containing" + one_back_from(current_cell).image.name)))]
         affected_cells += [AffectedCell(one_back_from(current_cell).x, one_back_from(current_cell).y, emptyCell)]
+        one_back_from(current_cell).image.deleted = True
 
     return affected_cells
 
@@ -509,6 +527,15 @@ def logic():
     for y in range(0, len(grid)):
         for x in range(0, len(grid[y])):
             cell = CellAt(x,y)
+            cell.image.deleted = False
+
+    for y in range(0, len(grid)):
+        for x in range(0, len(grid[y])):
+            cell = CellAt(x,y)
+            if cell.image in empty_conveyors:
+                affected_cells += empty_conveyor_behaviour(cell)
+            if cell.image in conveyors_containing_cells:
+                affected_cells += conveyor_containing_cell_behaviour(cell)
             if cell.image == generator:
                 affected_cells += generator_behaviour(cell)
             if cell.image in electrified_arrows:
@@ -517,10 +544,6 @@ def logic():
                 affected_cells += electrified_inverter_behaviour(cell)
             if cell.image == inverter:
                 affected_cells += inverter_behaviour(cell)
-            if cell.image in empty_conveyors:
-                affected_cells += empty_conveyor_behaviour(cell)
-            if cell.image in conveyors_containing_cells:
-                affected_cells += conveyor_containing_cell_behaviour(cell)
 
     for cell in affected_cells:
         set_cell(grid, cell.x, cell.y, cell.image)

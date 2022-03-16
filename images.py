@@ -1,10 +1,11 @@
 from tkinter import *
 
 class Cell(PhotoImage):
-    def __init__(self, gets, gives, name, file):
+    def __init__(self, gets, gives, name, file, deleted = False):
         PhotoImage.__init__(self, file=file, name=name)
         self.gets = gets
         self.gives = gives
+        self.deleted = deleted
 
 tk = Tk()
 
