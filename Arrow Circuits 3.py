@@ -620,11 +620,6 @@ def tick():
     logic()
     tk.after(500, tick)
 
-set_cell(grid, 5, 1, arrowPointingUp)
-set_cell(grid, 5, 2, arrowPointingUp)
-set_cell(grid, 5, 3, battery50PercentCharged)
-set_cell(grid, 5, 4, electrifiedArrowPointingUp)
-
 tk.bind('<Button-1>', buttons_reaction)
 tk.after(500, tick)
 tk.mainloop()
