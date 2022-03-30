@@ -81,6 +81,9 @@ conveyorPointingUpContainingConveyorPointingUp = Cell(gets = "down", gives = "up
 conveyorPointingUpContainingConveyorPointingLeft = Cell(gets = "down", gives = "up", name = "ConveyorPointingUpContainingConveyorPointingLeft", file = "resources/conveyor_pUP_c(conveyor_pLEFT).png")
 conveyorPointingUpContainingConveyorPointingDown = Cell(gets = "down", gives = "up", name = "ConveyorPointingUpContainingConveyorPointingDown", file = "resources/conveyor_pUP_c(conveyor_pDOWN).png")
 conveyorPointingUpContainingConveyorPointingRight = Cell(gets = "down", gives = "up", name = "ConveyorPointingUpContainingConveyorPointingRight", file = "resources/conveyor_pUP_c(conveyor_pRIGHT).png")
+conveyorPointingUpContainingBattery0PercentCharged = Cell(gets = "down", gives = "up", name = "ConveyorPointingUpContainingBattery0PercentCharged", file = "resources/conveyor_pUP_c(battery_0%).png")
+conveyorPointingUpContainingBattery50PercentCharged = Cell(gets = "down", gives = "up", name = "ConveyorPointingUpContainingBattery50PercentCharged", file = "resources/conveyor_pUP_c(battery_50%).png")
+conveyorPointingUpContainingBattery100PercentCharged = Cell(gets = "down", gives = "up", name = "ConveyorPointingUpContainingBattery100PercentCharged", file = "resources/conveyor_pUP_c(battery_100%).png")
 
 conveyorPointingLeftContainingGenerator = Cell(gets = "right", gives = "left", name = "ConveyorPointingLeftContainingGenerator", file = "resources/conveyor_pLEFT_c(generator).png")
 conveyorPointingLeftContainingArrowPointingUp = Cell(gets = "right", gives = "left", name = "ConveyorPointingLeftContainingArrowPointingUp", file = "resources/conveyor_pLEFT_c(arrow_pUP).png")
@@ -113,6 +116,9 @@ conveyorPointingLeftContainingConveyorPointingUp = Cell(gets = "right", gives = 
 conveyorPointingLeftContainingConveyorPointingLeft = Cell(gets = "right", gives = "left", name = "ConveyorPointingLeftContainingConveyorPointingLeft", file = "resources/conveyor_pLEFT_c(conveyor_pLEFT).png")
 conveyorPointingLeftContainingConveyorPointingDown = Cell(gets = "right", gives = "left", name = "ConveyorPointingLeftContainingConveyorPointingDown", file = "resources/conveyor_pLEFT_c(conveyor_pDOWN).png")
 conveyorPointingLeftContainingConveyorPointingRight = Cell(gets = "right", gives = "left", name = "ConveyorPointingLeftContainingConveyorPointingRight", file = "resources/conveyor_pLEFT_c(conveyor_pRIGHT).png")
+conveyorPointingLeftContainingBattery0PercentCharged = Cell(gets = "right", gives = "left", name = "ConveyorPointingLeftContainingBattery0PercentCharged", file = "resources/conveyor_pLEFT_c(battery_0%).png")
+conveyorPointingLeftContainingBattery50PercentCharged = Cell(gets = "right", gives = "left", name = "ConveyorPointingLeftContainingBattery50PercentCharged", file = "resources/conveyor_pLEFT_c(battery_50%).png")
+conveyorPointingLeftContainingBattery100PercentCharged = Cell(gets = "right", gives = "left", name = "ConveyorPointingLeftContainingBattery100PercentCharged", file = "resources/conveyor_pLEFT_c(battery_100%).png")
 
 conveyorPointingRightContainingGenerator = Cell(gets = "left", gives = "right", name = "ConveyorPointingRightContainingGenerator", file = "resources/conveyor_pRIGHT_c(generator).png")
 conveyorPointingRightContainingArrowPointingUp = Cell(gets = "left", gives = "right", name = "ConveyorPointingRightContainingArrowPointingUp", file = "resources/conveyor_pRIGHT_c(arrow_pUP).png")
@@ -145,6 +151,9 @@ conveyorPointingRightContainingConveyorPointingUp = Cell(gets = "left", gives = 
 conveyorPointingRightContainingConveyorPointingLeft = Cell(gets = "left", gives = "right", name = "ConveyorPointingRightContainingConveyorPointingLeft", file = "resources/conveyor_pRIGHT_c(conveyor_pLEFT).png")
 conveyorPointingRightContainingConveyorPointingDown = Cell(gets = "left", gives = "right", name = "ConveyorPointingRightContainingConveyorPointingDown", file = "resources/conveyor_pRIGHT_c(conveyor_pDOWN).png")
 conveyorPointingRightContainingConveyorPointingRight = Cell(gets = "left", gives = "right", name = "ConveyorPointingRightContainingConveyorPointingRight", file = "resources/conveyor_pRIGHT_c(conveyor_pRIGHT).png")
+conveyorPointingRightContainingBattery0PercentCharged = Cell(gets = "left", gives = "right", name = "ConveyorPointingRightContainingBattery0PercentCharged", file = "resources/conveyor_pRIGHT_c(battery_0%).png")
+conveyorPointingRightContainingBattery50PercentCharged = Cell(gets = "left", gives = "right", name = "ConveyorPointingRightContainingBattery50PercentCharged", file = "resources/conveyor_pRIGHT_c(battery_50%).png")
+conveyorPointingRightContainingBattery100PercentCharged = Cell(gets = "left", gives = "right", name = "ConveyorPointingRightContainingBattery100PercentCharged", file = "resources/conveyor_pRIGHT_c(battery_100%).png")
 
 conveyorPointingDownContainingGenerator = Cell(gets = "up", gives = "down", name = "ConveyorPointingDownContainingGenerator", file = "resources/conveyor_pDOWN_c(generator).png")
 conveyorPointingDownContainingArrowPointingUp = Cell(gets = "up", gives = "down", name = "ConveyorPointingDownContainingArrowPointingUp", file = "resources/conveyor_pDOWN_c(arrow_pUP).png")
@@ -177,6 +186,13 @@ conveyorPointingDownContainingConveyorPointingUp = Cell(gets = "up", gives = "do
 conveyorPointingDownContainingConveyorPointingLeft = Cell(gets = "up", gives = "down", name = "ConveyorPointingDownContainingConveyorPointingLeft", file = "resources/conveyor_pDOWN_c(conveyor_pLEFT).png")
 conveyorPointingDownContainingConveyorPointingDown = Cell(gets = "up", gives = "down", name = "ConveyorPointingDownContainingConveyorPointingDown", file = "resources/conveyor_pDOWN_c(conveyor_pDOWN).png")
 conveyorPointingDownContainingConveyorPointingRight = Cell(gets = "up", gives = "down", name = "ConveyorPointingDownContainingConveyorPointingRight", file = "resources/conveyor_pDOWN_c(conveyor_pRIGHT).png")
+conveyorPointingDownContainingBattery0PercentCharged = Cell(gets = "up", gives = "down", name = "ConveyorPointingDownContainingBattery0PercentCharged", file = "resources/conveyor_pDOWN_c(battery_0%).png")
+conveyorPointingDownContainingBattery50PercentCharged = Cell(gets = "up", gives = "down", name = "ConveyorPointingDownContainingBattery50PercentCharged", file = "resources/conveyor_pDOWN_c(battery_50%).png")
+conveyorPointingDownContainingBattery100PercentCharged = Cell(gets = "up", gives = "down", name = "ConveyorPointingDownContainingBattery100PercentCharged", file = "resources/conveyor_pDOWN_c(battery_100%).png")
+
+battery0PercentCharged = Cell(gets = None, gives = None, name = "Battery0PercentCharged", file = "resources/battery_0%.png")
+battery50PercentCharged = Cell(gets = None, gives = None, name = "Battery50PercentCharged", file = "resources/battery_50%.png")
+battery100PercentCharged = Cell(gets = None, gives = None, name = "Battery100PercentCharged", file = "resources/battery_100%.png")
 
 #MENU ICONS
 menuIconArrow = PhotoImage(file="resources/arrow_menu_icon.png")
@@ -186,3 +202,4 @@ menuIconConfigurator = PhotoImage(file="resources/configurator_menu_icon.png")
 menuIconEdge = PhotoImage(file="resources/edge_menu_icon.png")
 menuIconInverter = PhotoImage(file="resources/inverter_menu_icon.png")
 menuIconConveyor = PhotoImage(file="resources/conveyor_menu_icon.png")
+menuIconBattery = PhotoImage(file="resources/battery_menu_icon.png")
