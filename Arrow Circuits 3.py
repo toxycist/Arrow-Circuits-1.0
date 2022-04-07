@@ -18,6 +18,9 @@ tk.resizable(width = False, height = False)
 CANVAS = Canvas(tk, height = WINDOW_HEIGHT, width = WINDOW_WIDTH)
 CANVAS.pack()
 
+paused = False
+pauseImageId = 0
+
 #GRID
 
 def lower_first_letter(string):
@@ -101,6 +104,10 @@ def make_configurator_tool():
                 next_image = electrified_edges[(electrified_edges.index(current_cell_image) + 1) % len(electrified_edges)]
             elif current_cell_image in empty_conveyors:
                 next_image = empty_conveyors[(empty_conveyors.index(current_cell_image) + 1) % len(empty_conveyors)]
+            elif current_cell_image in observers:
+                next_image = observers[(observers.index(current_cell_image) + 1) % len(observers)]
+            elif current_cell_image in electrified_observers:
+                next_image = electrified_observers[(electrified_observers.index(current_cell_image) + 1) % len(electrified_observers)]
             else:
                 print("Configurator isn't compatible with that cell")
                 return
@@ -132,6 +139,9 @@ menuButtonConveyor.place(x=1036, y=IMG_HEIGHT * 15.5)
 
 menuButtonBattery = Button(tk, image = menuIconBattery, command = lambda: select_tool(make_image_tool(battery0PercentCharged)))
 menuButtonBattery.place(x=1200, y=IMG_HEIGHT * 15.5)
+
+menuButtonObserver = Button(tk, image = menuIconObserver, command = lambda: select_tool(make_image_tool(observerPointingUp)))
+menuButtonObserver.place(x=1364, y=IMG_HEIGHT * 15.5)
 
 #LOGIC
 
@@ -178,7 +188,11 @@ electrified_cells = [electrifiedArrowPointingUp,
                      battery25PercentCharged,
                      battery50PercentCharged,
                      battery75PercentCharged,
-                     battery100PercentCharged]
+                     battery100PercentCharged,
+                     electrifiedObserverPointingUp,
+                     electrifiedObserverPointingRight,
+                     electrifiedObserverPointingLeft,
+                     electrifiedObserverPointingDown]
 
 empty_conveyors = [conveyorPointingUp, 
                    conveyorPointingRight, 
@@ -221,6 +235,14 @@ conveyors_containing_cells = [conveyorPointingUpContainingGenerator,
                               conveyorPointingUpContainingBattery50PercentCharged,
                               conveyorPointingUpContainingBattery75PercentCharged,
                               conveyorPointingUpContainingBattery100PercentCharged,
+                              conveyorPointingUpContainingObserverPointingUp,
+                              conveyorPointingUpContainingObserverPointingLeft,
+                              conveyorPointingUpContainingObserverPointingDown,
+                              conveyorPointingUpContainingObserverPointingRight,
+                              conveyorPointingUpContainingElectrifiedObserverPointingUp,
+                              conveyorPointingUpContainingElectrifiedObserverPointingLeft,
+                              conveyorPointingUpContainingElectrifiedObserverPointingDown,
+                              conveyorPointingUpContainingElectrifiedObserverPointingRight,
                               conveyorPointingLeftContainingGenerator,
                               conveyorPointingLeftContainingArrowPointingUp,
                               conveyorPointingLeftContainingArrowPointingDown,
@@ -257,6 +279,14 @@ conveyors_containing_cells = [conveyorPointingUpContainingGenerator,
                               conveyorPointingLeftContainingBattery50PercentCharged,
                               conveyorPointingLeftContainingBattery75PercentCharged,
                               conveyorPointingLeftContainingBattery100PercentCharged,
+                              conveyorPointingLeftContainingObserverPointingUp,
+                              conveyorPointingLeftContainingObserverPointingLeft,
+                              conveyorPointingLeftContainingObserverPointingDown,
+                              conveyorPointingLeftContainingObserverPointingRight,
+                              conveyorPointingLeftContainingElectrifiedObserverPointingUp,
+                              conveyorPointingLeftContainingElectrifiedObserverPointingLeft,
+                              conveyorPointingLeftContainingElectrifiedObserverPointingDown,
+                              conveyorPointingLeftContainingElectrifiedObserverPointingRight,
                               conveyorPointingRightContainingGenerator,
                               conveyorPointingRightContainingArrowPointingUp,
                               conveyorPointingRightContainingArrowPointingDown,
@@ -292,6 +322,14 @@ conveyors_containing_cells = [conveyorPointingUpContainingGenerator,
                               conveyorPointingRightContainingBattery50PercentCharged,
                               conveyorPointingRightContainingBattery75PercentCharged,
                               conveyorPointingRightContainingBattery100PercentCharged,
+                              conveyorPointingRightContainingObserverPointingUp,
+                              conveyorPointingRightContainingObserverPointingLeft,
+                              conveyorPointingRightContainingObserverPointingDown,
+                              conveyorPointingRightContainingObserverPointingRight,
+                              conveyorPointingRightContainingElectrifiedObserverPointingUp,
+                              conveyorPointingRightContainingElectrifiedObserverPointingLeft,
+                              conveyorPointingRightContainingElectrifiedObserverPointingDown,
+                              conveyorPointingRightContainingElectrifiedObserverPointingRight,
                               conveyorPointingDownContainingGenerator,
                               conveyorPointingDownContainingArrowPointingUp,
                               conveyorPointingDownContainingArrowPointingDown,
@@ -326,13 +364,33 @@ conveyors_containing_cells = [conveyorPointingUpContainingGenerator,
                               conveyorPointingDownContainingBattery25PercentCharged,
                               conveyorPointingDownContainingBattery50PercentCharged,
                               conveyorPointingDownContainingBattery75PercentCharged,
-                              conveyorPointingDownContainingBattery100PercentCharged]
+                              conveyorPointingDownContainingBattery100PercentCharged,
+                              conveyorPointingDownContainingObserverPointingUp,
+                              conveyorPointingDownContainingObserverPointingLeft,
+                              conveyorPointingDownContainingObserverPointingDown,
+                              conveyorPointingDownContainingObserverPointingRight,
+                              conveyorPointingDownContainingElectrifiedObserverPointingUp,
+                              conveyorPointingDownContainingElectrifiedObserverPointingLeft,
+                              conveyorPointingDownContainingElectrifiedObserverPointingDown,
+                              conveyorPointingDownContainingElectrifiedObserverPointingRight]
 
 batteries = [battery0PercentCharged,
              battery25PercentCharged,
              battery50PercentCharged,
              battery75PercentCharged,
              battery100PercentCharged]
+
+observers = [observerPointingUp, 
+             observerPointingRight, 
+             observerPointingDown, 
+             observerPointingLeft]
+
+electrified_observers = [electrifiedObserverPointingUp, 
+                         electrifiedObserverPointingRight, 
+                         electrifiedObserverPointingDown, 
+                         electrifiedObserverPointingLeft]
+
+observed_cells = {}
 
 class AffectedCell(object):
     def __init__(self, x, y, image):
@@ -420,7 +478,11 @@ def electrify_cell(cell, charge = "default"):
             edgePointingFromRightUp: electrifiedEdgePointingFromRightUp,
             edgePointingFromUpLeft: electrifiedEdgePointingFromUpLeft,
             edgePointingFromUpRight: electrifiedEdgePointingFromUpRight,
-            inverter: electrifiedInverter
+            inverter: electrifiedInverter,
+            observerPointingUp: electrifiedObserverPointingUp,
+            observerPointingLeft: electrifiedObserverPointingLeft,
+            observerPointingRight: electrifiedObserverPointingRight,
+            observerPointingDown: electrifiedObserverPointingDown
         }
 
         if not electrifiedImage.__contains__(cell.image):
@@ -457,7 +519,11 @@ def deelectrify_cell(electrifiedCell, charge = "default"):
             electrifiedEdgePointingFromRightUp: edgePointingFromRightUp,
             electrifiedEdgePointingFromUpLeft: edgePointingFromUpLeft,
             electrifiedEdgePointingFromUpRight: edgePointingFromUpRight,
-            electrifiedInverter: inverter
+            electrifiedInverter: inverter,
+            electrifiedObserverPointingUp: observerPointingUp,
+            electrifiedObserverPointingLeft: observerPointingLeft,
+            electrifiedObserverPointingRight: observerPointingRight,
+            electrifiedObserverPointingDown: observerPointingDown
         }
 
         if not image.__contains__(electrifiedCell.image):
@@ -508,14 +574,15 @@ def generator_behaviour(current_cell):
     affected_cells = []
 
     for connection in check_cell_for_getting_connections(current_cell):
-        affected_cells += electrify_cell(connection)
+        if connection.image.name in [element.name for element in arrows] or connection.image.name in [element.name for element in electrified_arrows]:
+            affected_cells += electrify_cell(connection)
 
     return affected_cells
 
 def electrified_arrow_behaviour(current_cell):
     affected_cells = []
 
-    if one_front_from(current_cell) != None and one_front_from(current_cell).image.gets == invert_direction(current_cell.image.gives):
+    if one_front_from(current_cell) != None and one_front_from(current_cell).image.gets == invert_direction(current_cell.image.gives) and one_front_from(current_cell).image.name not in [element.name for element in observers]:
         affected_cells += electrify_cell(one_front_from(current_cell))
 
     if one_back_from(current_cell) != None and one_back_from(current_cell).image not in electrified_cells:
@@ -540,7 +607,8 @@ def electrified_inverter_behaviour(current_cell):
     affected_cells = []
 
     for connection in check_cell_for_getting_connections(current_cell):
-        affected_cells += electrify_cell(connection)
+        if connection.image.name in [element.name for element in arrows] or connection.image.name in [element.name for element in electrified_arrows]:
+            affected_cells += electrify_cell(connection)
     
     for connection in check_cell_for_giving_connections(current_cell):
         if connection.image.name in [element.name for element in electrified_arrows]:
@@ -580,45 +648,77 @@ def battery_behaviour(current_cell):
             if connection.image.name in [element.name for element in electrified_arrows]:
                 affected_cells += electrify_cell(current_cell, current_charge)[0]
                 current_charge = electrify_cell(current_cell, current_charge)[1]
+        return affected_cells
     else:
         for connection in giving_connections:
             if connection.image.name in [element.name for element in electrified_arrows] and len(electrify_cell(current_cell, current_charge)) > 0:
                 affected_cells += electrify_cell(current_cell, current_charge)[0]
                 current_charge = electrify_cell(current_cell, current_charge)[1]
-        for connection in getting_connections:
-            affected_cells += electrify_cell(connection)
-            affected_cells += deelectrify_cell(current_cell, current_charge)[0]
-            current_charge = deelectrify_cell(current_cell, current_charge)[1]
+        if len(getting_connections) > 0:
+            for connection in getting_connections:
+                if connection.image.name in [element.name for element in arrows] or connection.image.name in [element.name for element in electrified_arrows]:
+                    affected_cells += electrify_cell(connection)
+                    affected_cells += deelectrify_cell(current_cell, current_charge)[0]
+                    current_charge = deelectrify_cell(current_cell, current_charge)[1]
+        return affected_cells
+
+def observer_behaviour(current_cell):
+    affected_cells = []
+
+    if one_back_from(current_cell) != None and(current_cell.x, current_cell.y, current_cell.image.name) not in observed_cells:
+        observed_cells[(current_cell.x, current_cell.y, current_cell.image.name)] = one_back_from(current_cell).image.name
+    else:
+        if one_back_from(current_cell) != None and observed_cells[(current_cell.x, current_cell.y, current_cell.image.name)] != one_back_from(current_cell).image.name:
+            observed_cells[(current_cell.x, current_cell.y, current_cell.image.name)] = one_back_from(current_cell).image.name
+            affected_cells += electrify_cell(current_cell)
     
     return affected_cells
-                
+
+def electrified_observer_behaviour(current_cell):
+    affected_cells = []
+
+    if one_back_from(current_cell) != None and observed_cells[(current_cell.x, current_cell.y, current_cell.image.name.split("Electrified")[1])] == one_back_from(current_cell).image.name:
+        affected_cells += deelectrify_cell(current_cell)
+    else:
+        observed_cells[(current_cell.x, current_cell.y, current_cell.image.name.split("Electrified")[1])] = one_back_from(current_cell).image.name
+
+    for connection in check_cell_for_getting_connections(current_cell):
+        if connection.image.name in [element.name for element in arrows] or connection.image.name in [element.name for element in electrified_arrows]:
+            affected_cells += electrify_cell(connection)
+    
+    return affected_cells
 
 def logic():
     affected_cells = []
+    if paused == False:
 
-    for y in range(0, len(grid)):
-        for x in range(0, len(grid[y])):
-            cell = make_affected_cell(x, y, grid[y][x])
-            cell.image.deleted = False
+        for y in range(0, len(grid)):
+            for x in range(0, len(grid[y])):
+                cell = make_affected_cell(x, y, grid[y][x])
+                cell.image.deleted = False
 
-    for y in range(0, len(grid)):
-        for x in range(0, len(grid[y])):
-            cell = make_affected_cell(x, y, grid[y][x])
-            if cell.image.deleted == False:
-                if cell.image in empty_conveyors:
-                    affected_cells += empty_conveyor_behaviour(cell)
-                if cell.image in conveyors_containing_cells:
-                    affected_cells += conveyor_containing_cell_behaviour(cell)
-                if cell.image == generator:
-                    affected_cells += generator_behaviour(cell)
-                if cell.image in electrified_arrows:
-                    affected_cells += electrified_arrow_behaviour(cell)
-                if cell.image == electrifiedInverter:
-                    affected_cells += electrified_inverter_behaviour(cell)
-                if cell.image == inverter:
-                    affected_cells += inverter_behaviour(cell)
-                if cell.image in batteries:
-                    affected_cells += battery_behaviour(cell)
+        for y in range(0, len(grid)):
+            for x in range(0, len(grid[y])):
+                cell = make_affected_cell(x, y, grid[y][x])
+                if cell.image.deleted == False:
+                    if cell.image in empty_conveyors:
+                        affected_cells += empty_conveyor_behaviour(cell)
+                    if cell.image in conveyors_containing_cells:
+                        affected_cells += conveyor_containing_cell_behaviour(cell)
+                    if cell.image == generator:
+                        affected_cells += generator_behaviour(cell)
+                    if cell.image in electrified_arrows:
+                        affected_cells += electrified_arrow_behaviour(cell)
+                    if cell.image == electrifiedInverter:
+                        affected_cells += electrified_inverter_behaviour(cell)
+                    if cell.image == inverter:
+                        affected_cells += inverter_behaviour(cell)
+                    if cell.image in batteries:
+                        affected_cells += battery_behaviour(cell)
+                    if cell.image in observers:
+                        affected_cells += observer_behaviour(cell)
+                    if cell.image in electrified_observers:
+                        affected_cells += electrified_observer_behaviour(cell)
 
     for cell in affected_cells:
         set_cell(grid, cell.x, cell.y, cell.image)
@@ -631,11 +731,22 @@ def buttons_reaction(event):
     (x, y) = coordinates_to_img_number(event.x, event.y)
     current_tool(x, y)
 
+def pause(event):
+    global paused
+    global pauseImageId
+    if paused == True:
+        paused = False
+        CANVAS.delete(pauseImageId)
+    else:
+        paused = True
+        pauseImageId = CANVAS.create_image(WINDOW_WIDTH - 25, WINDOW_HEIGHT - 15, anchor = SE, image = pauseImage)
+
 def tick():
     """Main app timer handler: called up each tick and provides time concept for updates"""
     logic()
     tk.after(500, tick)
 
 tk.bind('<Button-1>', buttons_reaction)
+tk.bind('<space>', pause)
 tk.after(500, tick)
 tk.mainloop()
