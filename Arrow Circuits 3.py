@@ -16,6 +16,7 @@ tk.geometry("{}x{}".format(WINDOW_WIDTH, WINDOW_HEIGHT))
 tk.resizable(width = False, height = False)
 
 CANVAS = Canvas(tk, height = WINDOW_HEIGHT, width = WINDOW_WIDTH)
+CANVAS.create_text(5, IMG_HEIGHT * 15, text = "TXC & Co., Ltd.", anchor = NW, fill = "black", font = ("Helvetica 10 italic"))
 CANVAS.pack()
 
 paused = False
